@@ -1,0 +1,25 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+      http:
+
+exporters:
+  file/logs:
+    path: /var/lib/otel/logs.json
+  file/metrics:
+    path: /var/lib/otel/metrics.json
+  file/traces:
+    path: /var/lib/otel/traces.json
+
+service:
+  pipelines:
+    logs:
+      receivers: [otlp]
+      exporters: [file/logs]
+    metrics:
+      receivers: [otlp]
+      exporters: [file/metrics]
+    traces:
+      receivers: [otlp]
+      exporters: [file/traces]

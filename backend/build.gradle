@@ -1,0 +1,69 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.5.6'
+	id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'com.mblob'
+version = '0.0.1-SNAPSHOT'
+description = 'Yum Delivery'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(21)
+	}
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'       // Web MVC
+
+    // 🔐 Spring Security + JWT
+    // implementation 'org.springframework.boot:spring-boot-starter-security'
+    // implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+    // runtimeOnly   'io.jsonwebtoken:jjwt-impl:0.11.5'
+    // runtimeOnly   'io.jsonwebtoken:jjwt-jackson:0.11.5'
+
+    // 💾 Database & JPA
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'  // JPA
+    runtimeOnly 'org.postgresql:postgresql'                                 // PostgreSQL Driver
+
+    // ⚡ Redis
+    // implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+    // // 🌐 WebSocket
+    // implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
+    // // 🔍 QueryDSL (JPA)
+    // implementation 'com.querydsl:querydsl-jpa:5.1.0:jakarta'
+    // annotationProcessor 'com.querydsl:querydsl-apt:5.1.0:jakarta'
+    // annotationProcessor 'jakarta.persistence:jakarta.persistence-api'
+    // annotationProcessor 'jakarta.annotation:jakarta.annotation-api'
+
+    // // 📊 OpenTelemetry (OTLP Export)
+    // implementation 'io.opentelemetry:opentelemetry-api:1.48.0'
+    // implementation 'io.opentelemetry:opentelemetry-sdk:1.48.0'
+    // implementation 'io.opentelemetry:opentelemetry-exporter-otlp:1.48.0'
+
+    // 🛠️ Lombok
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // 🧪 Test
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
