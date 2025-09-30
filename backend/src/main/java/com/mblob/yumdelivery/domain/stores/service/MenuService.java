@@ -6,7 +6,6 @@ import com.mblob.yumdelivery.domain.stores.dto.MenuResponse;
 import com.mblob.yumdelivery.domain.stores.entity.Menu;
 import com.mblob.yumdelivery.domain.stores.entity.Store;
 import com.mblob.yumdelivery.domain.stores.repository.MenuRepository;
-import com.mblob.yumdelivery.domain.stores.repository.StoreRepository;
 import com.mblob.yumdelivery.global.security.CustomUserDetails;
 import com.mblob.yumdelivery.global.service.ValidateEntityService;
 
@@ -21,7 +20,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MenuService {
     private final MenuRepository menuRepository;
-    private final StoreRepository storeRepository;
     private final ValidateEntityService validateEntityService;
 
     @Transactional(readOnly = true)
@@ -42,12 +40,9 @@ public class MenuService {
         MenuAddRequest request
     ) throws AccessDeniedException {
 
-        Store store = storeRepository.findById(storeId)
-            .orElseThrow(() -> new IllegalArgumentException("가게를 찾을 수 없습니다."));
-
-        if (!store.getOwner().getId().equals(userDetails.getUser().getId())) {
-            throw new AccessDeniedException("권한이 없습니다.");
-        }
+        Store store = validateEntityService.getStoreById(storeId);
+        Long userId = userDetails.getUser().getId();
+        validateEntityService.validateStoreOwnership(store, userId);
 
         Menu menu = Menu.builder()
                 .store(store)
@@ -69,11 +64,11 @@ public class MenuService {
         MenuEditRequest request
     ) throws AccessDeniedException {
 
-        Menu menu = validateEntityService.getValidMenu(menuId, storeId);
+        Menu menu = validateEntityService.getMenuById(menuId, storeId);
+        Store store = menu.getStore();
+        Long userId = userDetails.getUser().getId();
 
-        if (!menu.getStore().getOwner().getId().equals(userDetails.getUser().getId())) {
-            throw new AccessDeniedException("권한이 없습니다.");
-        }
+        validateEntityService.validateStoreOwnership(store, userId);
 
         menu.update(
             request.name(),
@@ -92,11 +87,11 @@ public class MenuService {
         CustomUserDetails userDetails
     ) throws AccessDeniedException {
 
-        Menu menu = validateEntityService.getValidMenu(menuId, storeId);
+        Menu menu = validateEntityService.getMenuById(menuId, storeId);
+        Store store = menu.getStore();
+        Long userId = userDetails.getUser().getId();
 
-        if (!menu.getStore().getOwner().getId().equals(userDetails.getUser().getId())) {
-            throw new AccessDeniedException("권한이 없습니다.");
-        }
+        validateEntityService.validateStoreOwnership(store, userId);
 
         menuRepository.deleteById(menuId);
     }

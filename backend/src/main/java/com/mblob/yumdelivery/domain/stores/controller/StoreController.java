@@ -45,7 +45,7 @@ public class StoreController {
         return ResponseEntity.status(HttpStatus.CREATED).body(storeResponse);
     }
 
-    @PatchMapping("/{storeId}")
+    @PutMapping("/{storeId}")
     public ResponseEntity<StoreResponse> editStoreInfo(
             @PathVariable Long storeId,
             @Valid @RequestBody StoreEditRequest request,

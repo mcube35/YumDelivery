@@ -43,7 +43,7 @@ public class MenuController {
         return ResponseEntity.status(HttpStatus.CREATED).body(menuResponse);
     }
 
-    @PatchMapping("/{menuId}")
+    @PutMapping("/{menuId}")
     public ResponseEntity<MenuResponse> editMenu(
         @PathVariable Long storeId,
         @PathVariable Long menuId,

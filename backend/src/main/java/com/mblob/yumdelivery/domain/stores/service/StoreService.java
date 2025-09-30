@@ -6,6 +6,8 @@ import com.mblob.yumdelivery.domain.stores.dto.StoreResponse;
 import com.mblob.yumdelivery.domain.stores.entity.Store;
 import com.mblob.yumdelivery.domain.stores.repository.StoreRepository;
 import com.mblob.yumdelivery.global.security.CustomUserDetails;
+import com.mblob.yumdelivery.global.service.ValidateEntityService;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class StoreService {
     private final StoreRepository storeRepository;
+    private final ValidateEntityService validateEntityService;
 
     @Transactional(readOnly = true)
     public List<StoreResponse> getAllStores() {
@@ -61,12 +64,10 @@ public class StoreService {
         CustomUserDetails userDetails
     ) throws AccessDeniedException {
 
-        Store store = storeRepository.findById(storeId)
-                .orElseThrow(() -> new IllegalArgumentException("가게를 찾을 수 없습니다."));
+        Store store = validateEntityService.getStoreById(storeId);
+        Long userId = userDetails.getUser().getId();
 
-        if (!store.getOwner().getId().equals(userDetails.getUser().getId())) {
-            throw new AccessDeniedException("가게 정보 수정 권한이 없습니다.");
-        }
+        validateEntityService.validateStoreOwnership(store, userId);
 
         store.update(
             request.name(),
@@ -84,12 +85,10 @@ public class StoreService {
             CustomUserDetails userDetails
     ) throws AccessDeniedException {
 
-        Store store = storeRepository.findById(storeId)
-                .orElseThrow(() -> new IllegalArgumentException("가게를 찾을 수 없습니다."));
+        Store store = validateEntityService.getStoreById(storeId);
+        Long userId = userDetails.getUser().getId();
 
-        if (!store.getOwner().getId().equals(userDetails.getUser().getId())) {
-            throw new AccessDeniedException("가게 삭제 권한이 없습니다.");
-        }
+        validateEntityService.validateStoreOwnership(store, userId);
 
         storeRepository.deleteById(storeId);
     }
