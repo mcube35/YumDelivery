@@ -1,5 +1,7 @@
 package com.mblob.yumdelivery.global.service;
 
+import com.mblob.yumdelivery.domain.orders.entity.Order;
+import com.mblob.yumdelivery.domain.orders.repository.OrderRepository;
 import com.mblob.yumdelivery.domain.stores.entity.Menu;
 import com.mblob.yumdelivery.domain.stores.entity.Store;
 import com.mblob.yumdelivery.domain.stores.repository.MenuRepository;
@@ -15,6 +17,7 @@ public class ValidateEntityService {
     
     private final MenuRepository menuRepository;
     private final StoreRepository storeRepository;
+    private final OrderRepository orderRepository;
 
     // ==================== Menu Validation Methods ====================
 
@@ -42,4 +45,33 @@ public class ValidateEntityService {
         }
     }
 
+    // ==================== Order Validation Methods ====================
+
+    public Order getCustomerOrderById(
+        Long orderId,
+        Long userId
+    ) throws AccessDeniedException {
+
+        Order order = orderRepository.findById(orderId).orElseThrow(() -> new IllegalArgumentException("Order를 찾을 수 없습니다"));
+
+        if (!order.getCustomer().getId().equals(userId) && !order.getStore().getOwner().getId().equals(userId)) {
+            throw new AccessDeniedException("접근 불가능한 주문입니다.");
+        }
+
+        return order;
+    }
+
+    public Order getOwnerOrderById(
+        Long orderId,
+        Long userId
+    ) throws AccessDeniedException {
+
+        Order order = orderRepository.findById(orderId).orElseThrow(() -> new IllegalArgumentException("Order를 찾을 수 없습니다"));
+
+        if (!order.getStore().getOwner().getId().equals(userId)) {
+            throw new AccessDeniedException("접근 불가능한 주문입니다.");
+        }
+
+        return order;
+    }
 }
