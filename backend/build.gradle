@@ -26,19 +26,20 @@ repositories {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'       // Web MVC
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
 
     // 🔐 Spring Security + JWT
-    // implementation 'org.springframework.boot:spring-boot-starter-security'
-    // implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
-    // runtimeOnly   'io.jsonwebtoken:jjwt-impl:0.11.5'
-    // runtimeOnly   'io.jsonwebtoken:jjwt-jackson:0.11.5'
+     implementation 'org.springframework.boot:spring-boot-starter-security'
+     implementation 'io.jsonwebtoken:jjwt-api:0.13.0'
+     runtimeOnly   'io.jsonwebtoken:jjwt-impl:0.13.0'
+     runtimeOnly   'io.jsonwebtoken:jjwt-jackson:0.13.0'
 
     // 💾 Database & JPA
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'  // JPA
     runtimeOnly 'org.postgresql:postgresql'                                 // PostgreSQL Driver
 
     // ⚡ Redis
-    // implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
     // // 🌐 WebSocket
     // implementation 'org.springframework.boot:spring-boot-starter-websocket'
@@ -50,9 +51,9 @@ dependencies {
     // annotationProcessor 'jakarta.annotation:jakarta.annotation-api'
 
     // // 📊 OpenTelemetry (OTLP Export)
-    // implementation 'io.opentelemetry:opentelemetry-api:1.48.0'
-    // implementation 'io.opentelemetry:opentelemetry-sdk:1.48.0'
-    // implementation 'io.opentelemetry:opentelemetry-exporter-otlp:1.48.0'
+    // implementation 'io.opentelemetry:opentelemetry-api:1.54.1'
+    // implementation 'io.opentelemetry:opentelemetry-sdk:1.54.1'
+    // implementation 'io.opentelemetry:opentelemetry-exporter-otlp:1.54.1'
 
     // 🛠️ Lombok
     compileOnly 'org.projectlombok:lombok'
