@@ -18,5 +18,12 @@ public record MenuEditRequest(
 
         @NotNull
         @PositiveOrZero
-        Integer stock
+        Integer stock,
+
+        @NotNull
+        @Size(max = 10)
+        String category,
+
+        @NotNull
+        String imageUrl
 ) {}

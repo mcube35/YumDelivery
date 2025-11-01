@@ -142,4 +142,28 @@ public class JwtTokenProvider {
         Claims claims = parseClaims(token, true);
         return Long.parseLong(claims.getSubject());
     }
+
+    public boolean validateRefreshToken(String refreshToken, String accessToken) {
+        if (!validateToken(refreshToken)) {
+            return false;
+        }
+
+        Claims claims = parseClaims(accessToken, false);
+        Long userId = Long.parseLong(claims.getSubject());
+        String accessTokenJti = claims.getId();
+
+        String redisKey = String.format("RT:%d:%s", userId, accessTokenJti);
+        String storedRefreshToken = redisTemplate.opsForValue().get(redisKey);
+
+        return refreshToken.equals(storedRefreshToken);
+    }
+
+    public void deleteRefreshToken(String accessToken) {
+        Claims claims = parseClaims(accessToken, false);
+        long userId = Long.parseLong(claims.getSubject());
+        String accessTokenJti = claims.getId();
+
+        String key = String.format("RT:%d:%s", userId, accessTokenJti);
+        redisTemplate.delete(key);
+    }
 }

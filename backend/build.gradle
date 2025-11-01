@@ -38,11 +38,13 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'  // JPA
     runtimeOnly 'org.postgresql:postgresql'                                 // PostgreSQL Driver
 
-    // ⚡ Redis
-     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    // ⚡ Redis (Lettuce 기반)
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'io.lettuce:lettuce-core'  // Lettuce 명시적 추가
+    implementation 'org.apache.commons:commons-pool2'  // 연결 풀링
 
-    // // 🌐 WebSocket
-    // implementation 'org.springframework.boot:spring-boot-starter-websocket'
+    // 🌐 WebSocket
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
 
     // // 🔍 QueryDSL (JPA)
     // implementation 'com.querydsl:querydsl-jpa:5.1.0:jakarta'

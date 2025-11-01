@@ -9,6 +9,7 @@ import com.mblob.yumdelivery.domain.orders.event.OrderStatusChangedEvent;
 import com.mblob.yumdelivery.domain.stores.entity.*;
 import com.mblob.yumdelivery.domain.orders.repository.OrderRepository;
 import com.mblob.yumdelivery.domain.users.entity.User;
+import com.mblob.yumdelivery.global.redis.RedisOrderPublisher;
 import com.mblob.yumdelivery.global.security.CustomUserDetails;
 import com.mblob.yumdelivery.global.service.ValidateEntityService;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final ValidateEntityService validateEntityService;
     private final ApplicationEventPublisher eventPublisher;
+    private final RedisOrderPublisher redisOrderPublisher;
 
     @Transactional(readOnly = true)
     public List<OrderResponse> getAllMyOrder(
@@ -36,6 +38,20 @@ public class OrderService {
         User user = userDetails.getUser();
 
         return orderRepository.findAllByCustomer(user)
+                .stream()
+                .map(OrderResponse::from)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<OrderResponse> getStoreOrders(
+            Long storeId,
+            CustomUserDetails userDetails
+    ) throws AccessDeniedException {
+        Store store = validateEntityService.getStoreById(storeId);
+        validateEntityService.validateStoreOwnership(store, userDetails.getUser().getId());
+
+        return orderRepository.findAllByStoreId(storeId)
                 .stream()
                 .map(OrderResponse::from)
                 .toList();
@@ -83,7 +99,12 @@ public class OrderService {
         orderItems.forEach(item -> item.setOrder(order));
         
         Order savedOrder = orderRepository.save(order);
-        return OrderResponse.from(savedOrder);
+        OrderResponse orderResponse = OrderResponse.from(savedOrder);
+        
+        // Redis Pub/Sub으로 새 주문 알림
+        redisOrderPublisher.publishOrderUpdate(orderResponse);
+        
+        return orderResponse;
     }
 
     @Transactional
@@ -102,11 +123,11 @@ public class OrderService {
         };
 
         OrderStatus oldStatus = order.getStatus();
-        if (!oldStatus.equals(OrderStatus.PENDING)) {
-            throw new IllegalArgumentException("수정할 수 없는 주문입니다.");
-        }
-        order.updateStatus(status);
 
+        order.updateStatus(status);
+        
+        OrderResponse orderResponse = OrderResponse.from(order);
+        
         // Publish event
         eventPublisher.publishEvent(new OrderStatusChangedEvent(
             this,
@@ -115,8 +136,11 @@ public class OrderService {
             status,
             order.getCustomer().getId(),
             order.getStore().getId()
-        ));
+            ));
 
-        return OrderResponse.from(order);
+        // Redis Pub/Sub으로 주문 상태 변경 알림
+        redisOrderPublisher.publishOrderUpdate(orderResponse);
+
+        return orderResponse;
     }
 }

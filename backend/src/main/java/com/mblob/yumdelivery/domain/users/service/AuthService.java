@@ -11,8 +11,10 @@ import com.mblob.yumdelivery.global.security.jwt.JwtTokenProvider;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,5 +59,28 @@ public class AuthService {
         jwtTokenProvider.addRefreshTokenCookie(response, refreshToken);
 
         return new LoginResponse(accessToken);
+    }
+
+    @Transactional
+    public LoginResponse refreshToken(String refreshToken, String accessToken, HttpServletResponse response) {
+        if (!jwtTokenProvider.validateRefreshToken(refreshToken, accessToken)) {
+            jwtTokenProvider.removeRefreshTokenCookie(response); // 리프레시 토큰은 있는데 유효한 엑세스토큰이 없을 경우 쿠키삭제
+            throw new BadCredentialsException("Invalid refresh token");
+        }
+
+        Long userId = jwtTokenProvider.getUserIdFromToken(refreshToken);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with id: " + userId));
+
+        String newAccessToken = jwtTokenProvider.createAccessToken(user);
+
+        // 기존 RefreshToken 삭제
+        jwtTokenProvider.deleteRefreshToken(accessToken);
+
+        // 새로운 RefreshToken 생성 및 저장
+        String newRefreshToken = jwtTokenProvider.createRefreshToken(newAccessToken);
+        jwtTokenProvider.addRefreshTokenCookie(response, newRefreshToken);
+
+        return new LoginResponse(newAccessToken);
     }
 }

@@ -2,6 +2,7 @@ package com.mblob.yumdelivery.domain.orders.controller;
 
 import com.mblob.yumdelivery.domain.orders.dto.OrderAddRequest;
 import com.mblob.yumdelivery.domain.orders.dto.OrderResponse;
+import com.mblob.yumdelivery.domain.orders.dto.OrderStatusRequest;
 import com.mblob.yumdelivery.domain.orders.entity.OrderStatus;
 import com.mblob.yumdelivery.domain.orders.service.OrderService;
 import com.mblob.yumdelivery.global.security.CustomUserDetails;
@@ -31,6 +32,16 @@ public class OrderController {
         return ResponseEntity.ok(orderResponseList);
     }
 
+    @GetMapping("/stores/{storeId}")
+    public ResponseEntity<List<OrderResponse>> getOrderOfStore(
+            @PathVariable Long storeId,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) throws AccessDeniedException {
+
+        List<OrderResponse> orderResponseList = orderService.getStoreOrders(storeId, userDetails);
+        return ResponseEntity.ok(orderResponseList);
+    }
+
     @PostMapping
     public ResponseEntity<OrderResponse> createOrder(
             @Valid @RequestBody OrderAddRequest request,
@@ -41,14 +52,14 @@ public class OrderController {
         return ResponseEntity.status(HttpStatus.CREATED).body(orderResponse);
     }
 
-    @PatchMapping("/{orderId}/status/{orderStatus}")
+    @PatchMapping("/{orderId}/status")
     public ResponseEntity<OrderResponse> editOrderStatus(
             @PathVariable Long orderId,
-            @PathVariable OrderStatus orderStatus,
+            @RequestBody OrderStatusRequest request,
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) throws AccessDeniedException  {
 
-        OrderResponse orderResponse = orderService.editOrderStatus(orderId, orderStatus, userDetails);
+        OrderResponse orderResponse = orderService.editOrderStatus(orderId, request.status(), userDetails);
         return ResponseEntity.ok(orderResponse);
     }
 }

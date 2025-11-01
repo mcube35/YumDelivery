@@ -28,6 +28,14 @@ public class StoreController {
         return ResponseEntity.ok(storeResponseList);
     }
 
+    @GetMapping("/owner")
+    public ResponseEntity<List<StoreResponse>> getMyStores(
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        List<StoreResponse> storeResponseList = storeService.getMyStores(userDetails);
+        return ResponseEntity.ok(storeResponseList);
+    }
+
     @GetMapping("/{storeId}")
     public ResponseEntity<StoreResponse> getStore(
             @PathVariable Long storeId

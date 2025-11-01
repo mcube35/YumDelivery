@@ -1,6 +1,7 @@
 package com.mblob.yumdelivery.domain.stores.dto;
 
 import com.mblob.yumdelivery.domain.stores.entity.Menu;
+import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
 
@@ -10,7 +11,9 @@ public record MenuResponse(
         String name,
         String description,
         BigDecimal price,
-        Integer stock
+        Integer stock,
+        String category,
+        String imageUrl
 ) {
     public static MenuResponse from(Menu menu) {
         return new MenuResponse(
@@ -19,7 +22,9 @@ public record MenuResponse(
                 menu.getName(),
                 menu.getDescription(),
                 menu.getPrice(),
-                menu.getStock()
+                menu.getStock(),
+                menu.getCategory(),
+                menu.getImageUrl()
         );
     }
 }

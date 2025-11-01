@@ -9,10 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -33,6 +30,20 @@ public class AuthController {
             HttpServletResponse response
     ) {
         LoginResponse loginResponse = authService.login(request, response);
+        return ResponseEntity.ok(loginResponse);
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<LoginResponse> refresh(
+            @CookieValue("refreshToken") String refreshToken,
+            @RequestHeader("Authorization") String authHeader,
+            HttpServletResponse response
+    ) {
+        String accessToken = jwtTokenProvider.resolveToken(authHeader);
+        if (accessToken == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        LoginResponse loginResponse = authService.refreshToken(refreshToken, accessToken, response);
         return ResponseEntity.ok(loginResponse);
     }
 }

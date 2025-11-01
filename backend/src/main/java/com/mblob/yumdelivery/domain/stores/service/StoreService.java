@@ -31,6 +31,15 @@ public class StoreService {
     }
 
     @Transactional(readOnly = true)
+    public List<StoreResponse> getMyStores(CustomUserDetails userDetails) {
+
+        return storeRepository.findByOwner(userDetails.getUser())
+                .stream()
+                .map(StoreResponse::from)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
     public StoreResponse getStore(
         Long id
     ) {
@@ -51,6 +60,8 @@ public class StoreService {
                 .contact(request.contact())
                 .address(request.address())
                 .owner(userDetails.getUser())
+                .category(request.category())
+                .imageUrl(request.imageUrl())
                 .build();
 
         Store savedStore = storeRepository.save(store);
@@ -73,7 +84,9 @@ public class StoreService {
             request.name(),
             request.description(),
             request.contact(),
-            request.address()
+            request.address(),
+            request.category(),
+            request.imageUrl()
         );
         
         return StoreResponse.from(store);
