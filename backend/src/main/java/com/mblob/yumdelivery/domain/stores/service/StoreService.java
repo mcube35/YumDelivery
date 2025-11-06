@@ -60,8 +60,6 @@ public class StoreService {
                 .contact(request.contact())
                 .address(request.address())
                 .owner(userDetails.getUser())
-                .category(request.category())
-                .imageUrl(request.imageUrl())
                 .build();
 
         Store savedStore = storeRepository.save(store);
@@ -84,9 +82,7 @@ public class StoreService {
             request.name(),
             request.description(),
             request.contact(),
-            request.address(),
-            request.category(),
-            request.imageUrl()
+            request.address()
         );
         
         return StoreResponse.from(store);

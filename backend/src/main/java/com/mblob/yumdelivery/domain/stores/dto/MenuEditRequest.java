@@ -22,8 +22,5 @@ public record MenuEditRequest(
 
         @NotNull
         @Size(max = 10)
-        String category,
-
-        @NotNull
-        String imageUrl
+        String category
 ) {}

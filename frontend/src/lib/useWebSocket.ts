@@ -15,7 +15,7 @@ export function useWebSocket<T = any>({
   const [isConnected, setIsConnected] = useState(false);
   const onMessageRef = useRef(onMessage);
   const wsRef = useRef<WebSocket | null>(null);
-  const reconnectTimeoutRef = useRef<number | undefined>();
+  const reconnectTimeoutRef = useRef<number | undefined>(undefined);
 
   useEffect(() => {
     onMessageRef.current = onMessage;
@@ -25,7 +25,7 @@ export function useWebSocket<T = any>({
     let shouldReconnect = true;
 
     const connect = () => {
-      const token = useAuthStore.getState().token;
+      const { token } = useAuthStore.getState();
       const separator = url.includes("?") ? "&" : "?";
       const wsUrl = token ? `${url}${separator}token=${token}` : url;
 

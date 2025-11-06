@@ -51,7 +51,6 @@ public class MenuService {
                 .price(request.price())
                 .stock(request.stock())
                 .category(request.category())
-                .imageUrl(request.imageUrl())
                 .build();
 
         Menu savedMenu = menuRepository.save(menu);
@@ -77,8 +76,7 @@ public class MenuService {
             request.description(),
             request.price(),
             request.stock(),
-            request.category(),
-            request.imageUrl()
+            request.category()
         );
 
         return MenuResponse.from(menu);

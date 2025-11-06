@@ -3,9 +3,7 @@ import { fetchStoreList } from "@/lib/api";
 import { Link } from "react-router-dom";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import type { Store } from "@/lib/types";
-import { categoryIcons } from "@/lib/store-data";
 import { Info, MapPin } from "lucide-react";
 import { Spinner } from "@/components/ui/spinner";
 
@@ -38,19 +36,13 @@ export default function Content() {
                     <Card className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer h-full">
                         <div className="aspect-video relative overflow-hidden bg-muted">
                             <img
-                                src={store.imageUrl || "/placeholder.svg"}
+                                src="/placeholder.svg"
                                 alt={store.name}
                                 className="object-cover w-full h-full"
                             />
                         </div>
                         <CardHeader className="pb-3">
-                            <div className="flex items-start justify-between gap-2">
-                                <CardTitle className="text-xl">{store.name}</CardTitle>
-                                <Badge variant="secondary" className="flex items-center gap-1">
-                                    <span>{categoryIcons[store.category]}</span>
-                                    {store.category}
-                                </Badge>
-                            </div>
+                            <CardTitle className="text-xl">{store.name}</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <div className="space-y-1">

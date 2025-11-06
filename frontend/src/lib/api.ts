@@ -223,3 +223,114 @@ export async function updateOrderStatus(
 
   return res.json();
 }
+
+export async function applyStoreEntry(storeData: {
+  name: string;
+  description: string;
+  contact: string;
+  address: string;
+}) {
+  const res = await authenticatedFetch(API_URLS.STORES, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(storeData),
+  });
+
+  if (!res.ok) {
+    throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+  }
+
+  return res.json();
+}
+
+export async function updateStore(
+  storeId: number | string,
+  storeData: {
+    name: string;
+    description: string;
+    contact: string;
+    address: string;
+  }
+) {
+  const res = await authenticatedFetch(API_URLS.STORE(storeId), {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(storeData),
+  });
+
+  if (!res.ok) {
+    throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+  }
+
+  return res.json();
+}
+
+export async function addMenu(
+  storeId: number | string,
+  menuData: {
+    name: string;
+    description: string;
+    price: number;
+    stock: number;
+    category: string;
+  }
+) {
+  const res = await authenticatedFetch(API_URLS.MENUS(storeId), {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(menuData),
+  });
+
+  if (!res.ok) {
+    throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+  }
+
+  return res.json();
+}
+
+export async function editMenu(
+  storeId: number | string,
+  menuId: number | string,
+  menuData: {
+    name: string;
+    description: string;
+    price: number;
+    stock: number;
+    category: string;
+  }
+) {
+  const res = await authenticatedFetch(`${API_URLS.MENUS(storeId)}/${menuId}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(menuData),
+  });
+
+  if (!res.ok) {
+    throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+  }
+
+  return res.json();
+}
+
+export async function deleteMenu(
+  storeId: number | string,
+  menuId: number | string
+) {
+  const res = await authenticatedFetch(`${API_URLS.MENUS(storeId)}/${menuId}`, {
+    method: "DELETE",
+  });
+
+  if (!res.ok) {
+    throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+  }
+
+  return;
+}

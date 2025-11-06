@@ -1,9 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import type { Store } from "@/lib/types";
-import { categoryIcons } from "@/lib/store-data";
 import { Info, MapPin, ClipboardList, Settings } from "lucide-react";
 
 interface StoreListProps {
@@ -17,18 +15,13 @@ export default function StoreList({ stores }: StoreListProps) {
                 <Card key={store.id} className="overflow-hidden h-full">
                     <div className="aspect-video relative overflow-hidden bg-muted">
                         <img
-                            src={store.imageUrl || "/placeholder.svg"}
+                            src="/placeholder.svg"
+                            alt={store.name}
                             className="object-cover w-full h-full"
                         />
                     </div>
                     <CardHeader className="pb-3">
-                        <div className="flex items-start justify-between gap-2">
-                            <CardTitle className="text-xl">{store.name}</CardTitle>
-                            <Badge variant="secondary" className="flex items-center gap-1">
-                                <span>{categoryIcons[store.category]}</span>
-                                {store.category}
-                            </Badge>
-                        </div>
+                        <CardTitle className="text-xl">{store.name}</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <div className="space-y-3">
@@ -60,10 +53,12 @@ export default function StoreList({ stores }: StoreListProps) {
                                     size="sm"
                                     variant="outline"
                                     className="flex-1"
-                                    disabled
+                                    asChild
                                 >
-                                    <Settings className="h-4 w-4 mr-1" />
-                                    가게 수정
+                                    <Link to={`/stores/my/${store.id}/edit`}>
+                                        <Settings className="h-4 w-4 mr-1" />
+                                        가게 수정
+                                    </Link>
                                 </Button>
                             </div>
                         </div>

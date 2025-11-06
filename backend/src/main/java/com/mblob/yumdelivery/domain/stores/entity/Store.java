@@ -29,13 +29,6 @@ public class Store extends BaseTimeEntity {
     @Column(nullable = false)
     private String address;
 
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private StoreCategory category;
-
-    @Column
-    private String imageUrl;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id", nullable = false)
     private User owner;
@@ -44,15 +37,11 @@ public class Store extends BaseTimeEntity {
             String name,
             String description,
             String contact,
-            String address,
-            StoreCategory category,
-            String imageUrl
+            String address
     ) {
         this.name = name;
         this.description = description;
         this.contact = contact;
         this.address = address;
-        this.category = category;
-        this.imageUrl = imageUrl;
     }
 }

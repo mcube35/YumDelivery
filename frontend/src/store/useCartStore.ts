@@ -10,6 +10,7 @@ interface CartState {
   removeFromCart: (itemId: number) => void;
   replaceCart: (item: NewItem) => void;
   clearCart: () => void;
+  updateItemPrice: (itemId: number, newPrice: number) => void;
   getTotalItems: () => number;
   getTotalPrice: () => number;
 }
@@ -20,7 +21,7 @@ export const useCartStore = create<CartState>()(
       cart: [],
 
       addToCart: (item) => {
-        const cart = get().cart;
+        const { cart } = get();
         const currentStoreId = cart[0]?.storeId;
 
         if (currentStoreId && currentStoreId !== item.storeId) return false;
@@ -37,7 +38,7 @@ export const useCartStore = create<CartState>()(
       },
 
       removeFromCart: (itemId) => {
-        const cart = get().cart;
+        const { cart } = get();
         const item = cart.find((c) => c.id === itemId);
 
         set({
@@ -53,6 +54,13 @@ export const useCartStore = create<CartState>()(
       replaceCart: (item) => set({ cart: [{ ...item, quantity: 1 }] }),
 
       clearCart: () => set({ cart: [] }),
+
+      updateItemPrice: (itemId, newPrice) =>
+        set({
+          cart: get().cart.map((c) =>
+            c.id === itemId ? { ...c, price: newPrice } : c
+          ),
+        }),
 
       getTotalItems: () =>
         get().cart.reduce((sum, item) => sum + item.quantity, 0),

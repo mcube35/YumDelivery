@@ -21,7 +21,7 @@ export function useOrdersWebSocket({
     data: initialOrders,
     isLoading,
     error,
-  } = useQuery({
+  } = useQuery<Order[]>({
     queryKey,
     queryFn,
     select: (data) => [...data].reverse(),

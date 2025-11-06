@@ -1,24 +1,44 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCartStore } from "@/store/useCartStore";
-import { createOrder } from "@/lib/api";
+import { createOrder, fetchMenuList } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Empty, EmptyHeader, EmptyMedia, EmptyTitle, EmptyDescription, EmptyContent } from "@/components/ui/empty";
 import { ShoppingCart } from "lucide-react";
 import { CartItem } from "./cart-item";
 import { OrderForm } from "./order-form";
 import { OrderSummary } from "./order-summary";
+import type { MenuItem } from "@/lib/types";
 
 export default function Content() {
     const navigate = useNavigate();
     const queryClient = useQueryClient();
-    const { cart, addToCart, removeFromCart, clearCart } = useCartStore();
+    const { cart, addToCart, removeFromCart, clearCart, updateItemPrice } = useCartStore();
     const [deliveryAddress, setDeliveryAddress] = useState("");
     const [specialRequests, setSpecialRequests] = useState("");
     const [isOrdering, setIsOrdering] = useState(false);
 
     const formatPrice = (price: number) => `${price.toLocaleString("ko-KR")}원`;
+
+    // 장바구니 로드 시 최신 가격으로 동기화
+    useEffect(() => {
+        if (!cart.length) return;
+
+        const storeId = cart[0]?.storeId;
+        if (!storeId) return;
+
+        fetchMenuList(String(storeId))
+            .then((menus) => {
+                cart.forEach((cartItem) => {
+                    const currentMenu = menus.find((m: MenuItem) => m.id === cartItem.id);
+                    if (currentMenu && currentMenu.price !== cartItem.price) {
+                        updateItemPrice(cartItem.id, currentMenu.price);
+                    }
+                });
+            })
+            .catch((error) => console.error("가격 동기화 실패:", error));
+    }, []);
 
     const handleQuantityChange = (itemId: number, change: number) => {
         if (change > 0) {
@@ -38,34 +58,26 @@ export default function Content() {
         setIsOrdering(true);
 
         try {
-            const orderData = {
+            await createOrder({
                 storeId: cart[0]?.storeId,
-                items: cart.map((item) => ({
-                    menuId: item.id,
-                    qty: item.quantity,
-                })),
-                deliveryAddress: deliveryAddress,
-                specialRequests: specialRequests
-            };
+                items: cart.map((item) => ({ menuId: item.id, qty: item.quantity })),
+                deliveryAddress,
+                specialRequests,
+            });
 
-            await createOrder(orderData);
-
-            // 주문 목록 다시 불러오기
             await queryClient.invalidateQueries({ queryKey: ['orders'] });
 
             alert("주문이 완료되었습니다!");
             clearCart();
             navigate("/orders");
         } catch (e) {
-            const errorMsg =
-                e instanceof Error && e.message ? e.message : "알 수 없는 오류";
-            alert(`주문 실패: ${errorMsg}`);
+            alert(`주문 실패: ${e instanceof Error ? e.message : "알 수 없는 오류"}`);
         } finally {
             setIsOrdering(false);
         }
     };
 
-    if (cart.length === 0) {
+    if (!cart.length) {
         return (
             <main className="container mx-auto px-4 py-8">
                 <Empty>

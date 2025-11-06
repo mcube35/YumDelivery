@@ -44,7 +44,7 @@ export default function MenuItemCard({ item, quantity, onAdd, onRemove, formatPr
         <Card className="overflow-hidden p-3">
             <article className="flex gap-4">
                 <img
-                    src={item.imageUrl}
+                    src="/placeholder.svg"
                     alt={item.name}
                     className="w-28 h-28 flex-shrink-0 rounded-lg object-cover"
                 />

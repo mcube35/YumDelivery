@@ -1,11 +1,11 @@
 export type StoreCategory =
-  | "치킨"
-  | "피자"
-  | "한식"
-  | "중식"
-  | "일식"
-  | "패스트푸드"
-  | "분식";
+  | "CHICKEN"
+  | "PIZZA"
+  | "KOREAN"
+  | "CHINESE"
+  | "JAPANESE"
+  | "FAST_FOOD"
+  | "SNACK";
 
 export type UserRole = "USER" | "OWNER" | "ADMIN";
 
@@ -16,8 +16,6 @@ export type Store = {
   contact: string;
   address: string;
   ownerName: String;
-  category: StoreCategory;
-  imageUrl: string;
 };
 
 export type MenuItem = {
@@ -27,7 +25,6 @@ export type MenuItem = {
   description: string;
   price: number;
   stock?: number;
-  imageUrl: string;
   category: string;
 };
 
@@ -36,8 +33,6 @@ export type StoreEntryRequest = {
   description: string;
   contact: string;
   address: string;
-  category: StoreCategory;
-  imageUrl: string;
 };
 
 export type StoreEditRequest = {
@@ -45,8 +40,6 @@ export type StoreEditRequest = {
   description: string;
   contact: string;
   address: string;
-  category: StoreCategory;
-  imageUrl: string;
 };
 
 export type MenuAddRequest = {
@@ -54,7 +47,6 @@ export type MenuAddRequest = {
   description: string;
   price: number;
   stock: number;
-  imageUrl: string;
   category: string;
 };
 
@@ -63,7 +55,6 @@ export type MenuEditRequest = {
   description: string;
   price: number;
   stock: number;
-  imageUrl: string;
   category: string;
 };
 

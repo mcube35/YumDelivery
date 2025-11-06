@@ -8,7 +8,9 @@ import MenusPage from '@/pages/stores/[storeId]/menus/page';
 import CartPage from '@/pages/cart/page';
 import OrdersPage from '@/pages/orders/page';
 import MyStoresPage from '@/pages/stores/my/page';
+import StoreApplyPage from '@/pages/stores/my/apply/page';
 import StoreOrdersPage from '@/pages/stores/my/[storeId]/orders/page';
+import StoreEditPage from '@/pages/stores/my/[storeId]/edit/page';
 import { ProtectedRoute } from '@/components/protected-route';
 
 function App() {
@@ -21,6 +23,8 @@ function App() {
 
         <Route path="/stores" element={<ProtectedRoute><StoresPage /></ProtectedRoute>} />
         <Route path="/stores/my" element={<ProtectedRoute><MyStoresPage /></ProtectedRoute>} />
+        <Route path="/stores/my/apply" element={<ProtectedRoute><StoreApplyPage /></ProtectedRoute>} />
+        <Route path="/stores/my/:storeId/edit" element={<ProtectedRoute><StoreEditPage /></ProtectedRoute>} />
         <Route path="/stores/my/:storeId/orders" element={<ProtectedRoute><StoreOrdersPage /></ProtectedRoute>} />
         <Route path="/stores/:storeId/menus" element={<ProtectedRoute><MenusPage /></ProtectedRoute>} />
         <Route path="/cart" element={<ProtectedRoute><CartPage /></ProtectedRoute>} />

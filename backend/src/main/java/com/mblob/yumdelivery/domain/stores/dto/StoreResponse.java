@@ -8,9 +8,7 @@ public record StoreResponse(
         String description,
         String contact,
         String address,
-        String ownerName,
-        String category, // Korean 번역된 카테고리
-        String imageUrl
+        String ownerName
 ) {
     public static StoreResponse from(Store store) {
         return new StoreResponse(
@@ -19,9 +17,7 @@ public record StoreResponse(
                 store.getDescription(),
                 store.getContact(),
                 store.getAddress(),
-                store.getOwner().getUsername(), // User 엔티티의 username
-                store.getCategory().getKoreanName(),
-                store.getImageUrl()
+                store.getOwner().getUsername() // User 엔티티의 username
         );
     }
 }

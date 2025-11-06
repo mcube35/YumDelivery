@@ -12,8 +12,7 @@ public record MenuResponse(
         String description,
         BigDecimal price,
         Integer stock,
-        String category,
-        String imageUrl
+        String category
 ) {
     public static MenuResponse from(Menu menu) {
         return new MenuResponse(
@@ -23,8 +22,7 @@ public record MenuResponse(
                 menu.getDescription(),
                 menu.getPrice(),
                 menu.getStock(),
-                menu.getCategory(),
-                menu.getImageUrl()
+                menu.getCategory()
         );
     }
 }

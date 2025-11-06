@@ -38,22 +38,17 @@ public class Menu extends BaseTimeEntity {
     @Column(nullable = false, length = 10)
     private String category;
 
-    @Column
-    private String imageUrl;
-
     public void update(
             String name,
             String description,
             BigDecimal price,
             Integer stock,
-            String category,
-            String imageUrl
+            String category
     ) {
         this.name = name;
         this.description = description;
         this.price = price;
         this.stock = stock;
         this.category = category;
-        this.imageUrl = imageUrl;
     }
 }
